@@ -1,7 +1,7 @@
 
 function [] = solarSystemOfDeath()
 close all;
-numPlanets = 200;
+numPlanets = 10;
 timeSteps = 100;
 planets = init(numPlanets);
 
@@ -9,9 +9,9 @@ for i = 1: timeSteps
 plotPlanets(planets, numPlanets);
 % [planets, numPlanets] = addPlanet(planets, numPlanets);
 % [planets, numPlanets] = planetCollision(planets, numPlanets);
-planets.xpos = planets.xpos + randi([-10, 10],1,numPlanets);
-    planets.ypos = planets.ypos + randi([-10, 10],1,numPlanets);
-
+% planets.xpos = planets.xpos + randi([-10, 10],1,numPlanets);
+% planets.ypos = planets.ypos + randi([-10, 10],1,numPlanets);
+[planets, numPlanets] = nextStep(planets, numPlanets);
 
 end
 end
@@ -23,17 +23,18 @@ function planets = init(numPlanets)
     mapWidth = 1000;
     maxPlanetRadius = 25;
     minPlanetRadius = 10;
-    maxPlanetDensity = 10;
-    minPlanetDensity = 1;
+    maxPlanetMass = 10;
+    minPlanetMass = 1;
     maxSpeed = 2;
     cmap = hsv(numPlanets);
-    planets = struct('radius', 0, 'density', 0,'speed', 0,'direction', 0, ...
-        'xpos' , 0, 'ypos', 0, 'colour', [0 0 0]);
+    planets = struct('radius', 0, 'density', 0,'speed', 0,'xdir', 0, ...
+        'ydir', 0, 'xpos' , 0, 'ypos', 0, 'colour', [0 0 0]);
     for i = 1: numPlanets
         planets.radius(i) = randi([minPlanetRadius maxPlanetRadius]);
-        planets.density(i) = randi([minPlanetDensity, maxPlanetDensity]);
+        planets.mass(i) = randi([minPlanetMass, maxPlanetMass]);
         planets.speed(i) = randi([0, maxSpeed]);
-        planets.direction(i) = rand()* (2*pi);
+        planets.xdir(i) = rand();
+        planets.ydir(i) = rand();
         planets.xpos(i) = randi([10, mapWidth - 10]);
         planets.ypos(i) = randi([10, mapHeight - 10]);
         planets.colour(i, :) = cmap(i, :);
@@ -69,8 +70,28 @@ numPlanets = numPlanets - sum(planetsToDestroy);
 end
 
 %% This function calculates the next time step of the simulation
-function [planets, numPlanets] = nextStep(planets, numPlanet)
- 
+function [planets, numPlanets] = nextStep(planets, numPlanets)
+%  parfor??????
+planetsX = zeros(1, numPlanets);
+planetsY = zeros(1, numPlanets);
+for p = 1 : numPlanets
+    
+    for g = 1 : numPlanets
+        if (p == g)
+            continue            
+        end
+%         xd = planets.xpos(p) - planets.xpos(g);
+%         yd = planets.ypos(p) - planets.ypos(g);
+%         m = sqrt(xd^2 + yd^2);
+%         nxd = xd / m;
+%         nyd = yd / m;
+%         
+%         force = planets.mass(p) * planets.mass(g) / m; % f = m1*m2/dist
+%         a = force/planets.mass(p);
+%         v = planets.speed(p)^2 + a; % v = u + at each step is 1 sec
+%         s = (v^2 - planets.speed(p)^2)/(2 * a);  % v^2 = u^2 + 2as
+    end
+end
 end
 
 %% Adds a new random planet to the planets struct
